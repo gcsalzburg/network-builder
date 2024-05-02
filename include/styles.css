@@ -189,3 +189,32 @@ h1{
 	margin: 0;
  }
  
+/* *********************************************************** */
+/* Mouse follower popup                                        */
+/* *********************************************************** */
+
+.mouse-follower{
+	position: fixed;
+	display: flex;
+	pointer-events: none;
+	top: 20px;
+	left: -250px;
+	width: 500px;
+	justify-content: center;
+	z-index: 5000;
+}
+.mouse-follower span{
+	display: block;
+	background: var(--color-primary);
+	color: white;
+	font-size: 0.7em;
+	font-weight: 400;
+	font-family: 'Inter', sans-serif;
+	padding: 0.3em 0.4em;
+	opacity: 0.8;
+	border-radius: 3px;
+}
+.mouse-follower:not(.has-border) span{border-top-width: 0px;}
+.mouse-follower:not(.is-visible){
+	display:none;
+}

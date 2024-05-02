@@ -109,6 +109,14 @@ export default class{
 			el.className = 'marker'
 			const newMarker = new mapboxgl.Marker(el).setLngLat(feature.geometry.coordinates).addTo(this.map)
 			this.mapData.markers.push(newMarker)
+
+			// Add marker hover
+			newMarker.getElement().addEventListener('mousemove', (e) => {
+				this.options.follower.set(`${feature.properties.title}`)
+			})
+			newMarker.getElement().addEventListener('mouseleave', (e) => {
+				this.options.follower.clear()
+			})
 		}
 
 		this.generateRoutes()
@@ -191,6 +199,8 @@ export default class{
 			const parts = row.split(',')
 			if(parts.length >= 2){
 				// Add new geoJSON
+				const title = (parts.length > 2) ? parts[2] : ''
+				const type = (parts.length > 3) ? parts[3] : ''
 				const newLocation = {
 					type: 'Feature',
 					geometry: {
@@ -198,7 +208,8 @@ export default class{
 						coordinates: [parts[1], parts[0]]
 					},
 					properties: {
-						title: 'Test point'
+						title: title,
+						type: type
 					}
 				}
 				newGeoJSON.features.push(newLocation)
@@ -231,7 +242,6 @@ export default class{
 				['<', ['to-number', ['get', 'distance']], this.droneRange]
 			]
 		})
-		console.log(validRoutes)
 	
 		// For each valid route, set the feature as being within range
 		validRoutes.forEach((feature) => {

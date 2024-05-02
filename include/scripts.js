@@ -1,5 +1,6 @@
 'use strict'
 
+import Follower from './Follower.js'
 import MapDesigner from './MapDesigner.js'
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -8,8 +9,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// Create new Sentry object
 
 	const	myNetwork = new MapDesigner({
+
+		follower: new Follower(),
+
 		mapbox_token: 'pk.eyJ1IjoiZ2NzYWx6YnVyZyIsImEiOiJjam1pNm5uZmcwMXNyM3FtNGp6dTY3MGxsIn0.PmLPkI3T8UxjEIPnz7fxEA',
 		mapbox_style: 'mapbox://styles/annamitch/clsded3i901rg01qyc16p8dzw',
+		
 		dom: {
 			mapbox: document.querySelector('.map'),
 			codeCSV: document.querySelector('[data-code=csv]'),
