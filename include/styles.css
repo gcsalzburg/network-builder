@@ -75,10 +75,15 @@ h1{
 .marker{
 	background: var(--color-primary);
 	width: 12px;
-	height: 12px;
 	border-radius: 50%;
 	cursor: pointer;
+	aspect-ratio: 1;
 	box-shadow: 0px 0px 5px 0px white;
+}
+.marker:hover {
+	border: 3px solid var(--color-primary);
+	background: white;
+	width: 6px;
 }
 
 /* *********************************************************** */
@@ -179,15 +184,16 @@ h1{
 	font-size: 0.7em;
 	margin-top: 0.3em;
 }
- 
- option {
-	padding: 0;
- }
- 
- input[type="range"] {
+
+.drone-range-wrapper .drone-range{
 	width: 150px;
 	margin: 0;
- }
+}
+
+.route-mode-wrapper select{
+	padding:0.4em 0.1em;
+	border-radius: 3px;
+}
  
 /* *********************************************************** */
 /* Mouse follower popup                                        */
@@ -198,8 +204,8 @@ h1{
 	display: flex;
 	pointer-events: none;
 	top: 20px;
-	left: -250px;
-	width: 500px;
+	left: 0px;
+	max-width: 200px;
 	justify-content: center;
 	z-index: 5000;
 }

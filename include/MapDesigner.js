@@ -17,17 +17,22 @@ export default class{
 	// Mapbox map object
 	map = null
 
-	droneRange = 10
+	// Feature options
+	featureOptions = {
+		droneRange: 5,
+		mode: 'hub-spoke'
+	}
+
  
 	// Default options are below
 	options = {
 		mapbox_token: '',
 		mapbox_style: 'mapbox://styles/mapbox/light-v11',
 		mapbox_view: {
-			zoom: 9,
+			zoom: 10,
 			centre: {
-				lng: -0.114136,
-				lat: 51.509356,
+				lng: -0.164136,
+				lat: 51.569356,
 			}
 		}
 	}
@@ -123,10 +128,23 @@ export default class{
 	}
 
 	generateRoutes = async () => {
-		const points = this.mapData.nodes.features
-		for (let start_index=0; start_index<(points.length-1); start_index++) {
-			for (let end_index=start_index+1; end_index<points.length; end_index++) {
-				const distance = turf.distance(points[start_index], points[end_index], {units: 'kilometers'})
+
+		// Empty existing routes
+		this.mapData.routes.features = []
+
+		let start_points
+		const end_points = this.mapData.nodes.features
+
+		// Set start points based on link type
+		if(this.featureOptions.mode == 'hub-spoke'){
+			start_points = this.mapData.nodes.features.filter(feature => feature.properties.dzType == 'hub')
+		}else{
+			start_points = this.mapData.nodes.features.slice(0, -1) // not last item, otherwise we duplicate some links
+		}
+
+		for (let start_index=0; start_index<start_points.length; start_index++) {
+			for (let end_index=start_index+1; end_index<end_points.length; end_index++) {
+				const distance = turf.distance(start_points[start_index], end_points[end_index], {units: 'kilometers'})
 				this.mapData.routes.features.push({
 					type: "Feature",
 					properties: {
@@ -139,8 +157,8 @@ export default class{
 					geometry: {
 						type: 'LineString',
 						coordinates: [
-							points[start_index].geometry.coordinates,
-							points[end_index].geometry.coordinates,
+							start_points[start_index].geometry.coordinates,
+							end_points[end_index].geometry.coordinates,
 						]
 					}
 				})
@@ -156,7 +174,7 @@ export default class{
 	onSourceData = (e) => {
 		if (e.isSourceLoaded && e.sourceDataType != 'metadata'){ // I worked out these parameter checks by inspection and guesswork, may not be stable!
 			this.map.off('sourcedata', this.onSourceData);
-			this.setDroneRange(this.droneRange)
+			this.setDroneRange(this.featureOptions.droneRange)
 		}
 	}
 
@@ -201,6 +219,7 @@ export default class{
 				// Add new geoJSON
 				const title = (parts.length > 2) ? parts[2] : ''
 				const type = (parts.length > 3) ? parts[3] : ''
+				const dzType = (parts.length > 4) ? parts[4] : ''
 				const newLocation = {
 					type: 'Feature',
 					geometry: {
@@ -209,7 +228,8 @@ export default class{
 					},
 					properties: {
 						title: title,
-						type: type
+						type: type,
+						dzType: dzType
 					}
 				}
 				newGeoJSON.features.push(newLocation)
@@ -223,8 +243,8 @@ export default class{
 
 	setDroneRange = (range) => {
 		// Save the range
-		this.droneRange = parseInt(range)
-		console.log(`Drone range: ${this.droneRange}km`)
+		this.featureOptions.droneRange = parseInt(range)
+		console.log(`Drone range: ${this.featureOptions.droneRange}km`)
 
 		// Clear all routes as being within drone range or not
 		for(let feature of this.mapData.routes.features){
@@ -239,7 +259,7 @@ export default class{
 			sourceLayer: 'routes',
 			filter: [
 				'all',
-				['<', ['to-number', ['get', 'distance']], this.droneRange]
+				['<', ['to-number', ['get', 'distance']], this.featureOptions.droneRange]
 			]
 		})
 	
@@ -250,5 +270,13 @@ export default class{
 				{withinDroneRange: true}
 			)
 		})
+	}
+
+	// **********************************************************
+	// Routing mode handling
+
+	setRouteType = (type) => {
+		this.featureOptions.mode = type
+		this.generateRoutes()
 	}
 }
