@@ -14,8 +14,9 @@ export default class{
 		markers: []
 	}
 
-	// Mapbox map object
+	// Mapbox objects
 	map = null
+	hoveredRoute = null
 
 	// Feature options
 	featureOptions = {
@@ -88,8 +89,18 @@ export default class{
 			},
 			'paint': {
 				'line-color': `#ffc03a`,
-				'line-width': 2,
-				'line-blur': 2,
+				'line-width': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					6,
+					4
+				],
+				'line-blur': [
+					'case',
+					['boolean', ['feature-state', 'hover'], false],
+					2,
+					8
+				],
 				'line-opacity': [
 					'case', 
 					['boolean', ['feature-state', 'withinDroneRange'], false],
@@ -97,6 +108,45 @@ export default class{
 					0
 				]
 			}
+		})
+
+		// Add hover effects to routes
+		this.map.on('mousemove', 'routes', (e) => {
+			this.map.getCanvas().style.cursor = 'pointer'
+			if (e.features.length > 0) {
+
+				for(let feature of e.features){
+					if(feature.properties.distance < this.featureOptions.droneRange){
+						// Unhighlight current hovered one
+						if (this.hoveredRoute !== null) {
+							this.map.setFeatureState(
+								{source: 'routes', id: this.hoveredRoute},
+								{hover: false}
+							)
+						}
+
+						// Highlight new one
+						this.hoveredRoute = feature.id
+						this.map.setFeatureState(
+							{source: 'routes', id: feature.id},
+							{hover: true}
+						)
+						this.options.follower.set(`${Math.round(feature.properties.distance*10)/10} km`, {style: 'route'})
+						break
+					}
+				}
+			}
+		})
+		this.map.on('mouseleave', 'routes', () => {
+			// Clear hover effect
+			if (this.hoveredRoute !== null) {
+				this.map.setFeatureState(
+					{source: 'routes', id: this.hoveredRoute},
+					{hover: false}
+				)
+			}
+			this.hoveredRoute = null
+			this.options.follower.clear()
 		})
 	}
 

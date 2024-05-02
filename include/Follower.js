@@ -40,8 +40,9 @@ export default class{
 		this.container.classList.add('is-visible')
 
 		if(options.style){
-			this.container.classList.add('has-border')
-			this.container.querySelector('span').style.borderTopColor = this.options.styles[options.style]
+			this.container.querySelector('span').style.background = this.options.styles[options.style]
+		}else{
+			this.container.querySelector('span').style.background = null
 		}
 	}
 
