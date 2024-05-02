@@ -7,14 +7,25 @@ document.addEventListener("DOMContentLoaded", async () => {
 	// **********************************************************
 	// Create new Sentry object
 
-	const	myMap = new MapDesigner({
+	const	myNetwork = new MapDesigner({
 		mapbox_token: 'pk.eyJ1IjoiZ2NzYWx6YnVyZyIsImEiOiJjam1pNm5uZmcwMXNyM3FtNGp6dTY3MGxsIn0.PmLPkI3T8UxjEIPnz7fxEA',
 		mapbox_style: 'mapbox://styles/annamitch/clsded3i901rg01qyc16p8dzw',
 		dom: {
 			mapbox: document.querySelector('.map'),
 			codeCSV: document.querySelector('[data-code=csv]'),
 			codeGeoJSON: document.querySelector('[data-code=geojson]'),
+			droneRange: document.querySelector('.drone-range-wrapper')
 		}		
+	})
+
+	// **********************************************************
+	// Handle sliders
+
+	const droneRangeValue = document.querySelector('.drone-range-wrapper .value')
+
+	document.querySelector('.drone-range-wrapper input[type="range"]').addEventListener("input", (e) => {
+		droneRangeValue.textContent = `${e.target.value} km`
+		myNetwork.setDroneRange(e.target.value)
 	})
 
 	// **********************************************************

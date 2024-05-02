@@ -22,7 +22,7 @@
 
 	<body>
 			<header>
-				<h1>routes builder</h1>
+				<h1>network builder</h1>
 				<nav></nav>
 			</header>
 			<main>
@@ -36,11 +36,103 @@
 							<a href="#toggle-code-geojson" data-toggle="geojson">GeoJSON</a>
 						</nav>
 						<div class="code">
-							<textarea data-code="csv">51.509356,-0.114136,Centre</textarea>
+							<textarea data-code="csv">51.7695207,0.0853945,Hospital
+51.5135562,-0.0499807,Health Centre
+51.5148198,-0.0650534,Hospital
+51.517496,-0.1000463,Hospital
+51.5167424,-0.0583167,Department
+51.5171827,-0.058062,Pathology Lab
+51.5250734,-0.0421445,Hospital
+51.5584939,-0.011831,Medical Centre
+51.5778196,0.0032545,Hospital
+51.5837024,0.027568,Hospital
+51.578411,0.0248039,Medical Centre
+51.5222415,0.0325405,Hospital
+51.4986925,-0.025695,Birth
+51.5430798,0.0085702,MIdwife
+51.5110915,0.017334,Misc
+51.5018167,0.0562749,Children's
+51.511472,0.0256886,Midwife
+51.5803305,-0.0318845,Health Centre
+51.5826775,-0.0097845,Misc
+51.531965,-0.0497284,Hospital
+51.6201726,-0.0002776,Hospital
+51.5382155,0.0381889,Children's
+51.5391765,0.0442366,Health Centre
+51.517496,-0.1000463,Hospital
+51.5459528,0.0772424,Clinic
+51.6437448,0.0533731,Medical Centre
+51.5388712,0.079086,Misc
+51.5814822,0.070176,Clinic
+51.5802748,0.1115243,Hospital
+51.6242482,0.0324056,Misc
+51.5769482,0.1212996,Children's
+51.5382697,0.7119588,Misc
+51.5790913,-0.3383228,Misc
+51.5753935,-0.3201711,Hospital
+51.5950054,-0.3428669,Misc
+51.5933169,-0.3402937,Misc
+51.5765769,-0.3700184,Misc
+51.5661223,-0.3666812,Misc
+51.5871018,-0.3013796,Hospice
+51.6030051,-0.3390059,Misc
+51.5943412,-0.3345192,Misc
+51.6010839,-0.3204389,Health Centre
+51.5770403,-0.2921086,Misc
+51.6056325,-0.3003302,Misc
+51.5638673,-0.2765893,Clinic
+51.5428257,-0.2356393,Health Centre
+51.5427921,-0.2354354,Clinic
+51.530944,-0.2690778,Hospital
+51.541567,-0.2610213,Clinic
+51.5329876,-0.1955469,Misc
+51.5388543,-0.1958278,Clinic
+51.4329249,0.021203,School
+51.51128,-0.3792752,Clinic
+51.5127801,-0.3809683,Clinic
+51.5075205,-0.3465216,Hospital
+51.5455948,-0.4516536,Medical Centre
+51.5014691,-0.3731663,Misc
+51.5051438,-0.3572665,Misc
+51.521717,-0.4234145,Misc
+51.5054934,-0.4192606,Health Centre
+51.5343125,-0.3888126,Misc
+51.535798,-0.3934174,Clinic
+51.5315749,-0.3762716,Health Centre
+51.5399724,-0.3166519,GP
+51.5342227,-0.3465303,Misc
+51.529548,-0.3551001,Clinic
+51.5494203,-0.4829036,Misc
+51.5116467,-0.3153281,Psychiatric
+51.5094181,-0.3273946,Children's
+51.4951142,-0.2988978,Hospital
+51.5116299,-0.3126703,Children's
+51.5115109,-0.3142697,Misc
+51.389646,1.3868339,Clinic
+51.6459934,-0.0618161,GP</textarea>
 							<textarea data-code="geojson">json,json,json</textarea>
 						</div>
 					</div>
-				
+					<div class="feature-options">
+						<div class="drone-range-wrapper">
+							<label for="drone-range">Drone range:</label>
+							<span class="slider">
+								<input type="range" id="drone-range" name="drone-range" min="1" max="25" step="1" list="drone-range-ticklist" value="10" />
+								<datalist id="drone-range-ticklist">
+									<option value="0"></option>
+									<option label="5" value="5"></option>
+									<option label="10" value="10"></option>
+									<option label="15" value="15"></option>
+									<option label="20" value="20"></option>
+									<option label="25" value="25"></option>
+								 </datalist>
+							</span>
+							<span class="value">10 km</span>
+						</div>
+					</div>
+					<div class="style-options">
+
+					</div>
 				</section>
 			</main>
 			<!--<section class="stats">
