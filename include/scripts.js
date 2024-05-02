@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	const	myMap = new MapDesigner({
 		mapbox_token: 'pk.eyJ1IjoiZ2NzYWx6YnVyZyIsImEiOiJjam1pNm5uZmcwMXNyM3FtNGp6dTY3MGxsIn0.PmLPkI3T8UxjEIPnz7fxEA',
+		mapbox_style: 'mapbox://styles/annamitch/clsded3i901rg01qyc16p8dzw',
 		dom: {
 			mapbox: document.querySelector('.map'),
 			codeCSV: document.querySelector('[data-code=csv]'),
