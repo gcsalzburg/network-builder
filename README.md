@@ -16,7 +16,7 @@
 + ~~Different colour per type~~
 + ~~Hubs larger than spokes so they jump out a bit~~
 + ~~Toggle option to say flights only from hub->spoke, or from anywhere->anywhere~~
-+ Rename to Network planner app
++ ~~Rename to Network planner app~~
 + Error checking when parsing CSV
 + Drag a point around to find a good hub location
 + LocalStorage when re-loading page
