@@ -50,6 +50,7 @@ main{
 
 .map-container{
 	width: 70%;
+	flex-shrink: 0;
 }
 .config-container{
 	padding-left: 1em;
@@ -86,9 +87,14 @@ h1{
 	aspect-ratio: 1;
 	box-shadow: 0px 0px 5px 0px white;
 }
+
+[data-show-type-colours='true'] .marker{
+	background: var(--type-colour)
+}
+
 .marker:hover {
 	border: var(--hover_border_width) solid var(--color-primary);
-	background: white;
+	background: hsl(0, 0%, 100%);
 	width: calc(var(--marker_width) - (2 * var(--hover_border_width)));
 }
 
@@ -204,6 +210,44 @@ h1{
 	padding:0.4em 0.1em;
 	border-radius: 3px;
 }
+
+.type-colour-wrapper{
+	margin-top:0.5em;
+}
+
+.type-colour-wrapper input{
+	padding:0.4em 0.1em;
+	border-radius: 3px;
+	margin-top:6px;
+}
+
+
+.type-colour-wrapper .type-colours{
+	display: flex;
+	flex-wrap: wrap;
+	margin-top: 5px;
+}
+body:not([data-show-type-colours='true']) .type-colours{display:none;}
+
+.type-colour-wrapper .type-colours span{
+	font-size: 0.85em;
+	display: block;
+	position: relative;
+	text-indent: 17px;
+	width: 50%;
+	margin: 0;
+}
+.type-colour-wrapper .type-colours span::before{
+	content: "";
+	border-radius: 50%;
+	width: 11px;
+	aspect-ratio: 1;
+	background-color: var(--color);
+	position: absolute;
+	left: 0px;
+	top: 2px;
+}
+
  
 /* *********************************************************** */
 /* Mouse follower popup                                        */
@@ -215,7 +259,7 @@ h1{
 	pointer-events: none;
 	top: 20px;
 	left: 0px;
-	max-width: 200px;
+	max-width: 350px;
 	justify-content: center;
 	z-index: 5000;
 }

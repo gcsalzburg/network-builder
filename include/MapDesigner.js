@@ -21,9 +21,9 @@ export default class{
 	// Feature options
 	featureOptions = {
 		droneRange: 5,
-		mode: 'hub-spoke'
+		mode: 'hub-spoke',
+		types: []
 	}
-
  
 	// Default options are below
 	options = {
@@ -64,12 +64,8 @@ export default class{
 
 		// Once the map has loaded
 		this.map.on('load', async () => {
-			// Startup
-			this.initMapLayers()			// Prep mapbox layers
-			this.startDOMListeners()	// Starter code change listeners
-
-			// Load initial data
-			this.codeChange('csv')		// Trigger initial builds
+			this.initMapLayers()											// Prep mapbox layers
+			this.csvIsUpdated(this.options.dom.codeCSV.value)	// Trigger initial builds
 		})
 	}
 
@@ -150,6 +146,32 @@ export default class{
 		})
 	}
 
+	reRender = (options) => {
+
+		const _options = {...{
+			markers: true,
+			routes: true
+		}, ...options}
+
+		if(_options.markers){
+			// Clear old markers
+			for(let marker of this.mapData.markers){
+				marker.remove()
+			}
+	
+			// Add new markers
+			this.addMarkers()
+		}
+		
+		if(_options.routes){
+			// Empty existing routes
+			this.mapData.routes.features = []
+	
+			// Regenerate routes
+			this.generateRoutes()
+		}
+	}
+
 	// Add markers from geoJSON
 	addMarkers = () => {
 		// Clear old markers
@@ -163,12 +185,15 @@ export default class{
 			const el = document.createElement('div')
 			el.className = 'marker'
 			el.classList.toggle('is_hub', feature.properties.dzType == 'hub')
+			if(feature.properties.type){
+				el.style = `--type-colour: hsl(${this.featureOptions.types.indexOf(feature.properties.type)*29}, 70%, 50%)`
+			}
 			const newMarker = new mapboxgl.Marker(el).setLngLat(feature.geometry.coordinates).addTo(this.map)
 			this.mapData.markers.push(newMarker)
 
 			// Add marker hover
 			newMarker.getElement().addEventListener('mousemove', (e) => {
-				this.options.follower.set(`${feature.properties.title}`)
+				this.options.follower.set(`${feature.properties.placename}<br>(${feature.properties.type})`)
 			})
 			newMarker.getElement().addEventListener('mouseleave', (e) => {
 				this.options.follower.clear()
@@ -177,8 +202,6 @@ export default class{
 				this.toggleMarkerHub(feature, newMarker)
 			})
 		}
-
-		this.generateRoutes()
 	}
 
 	toggleMarkerHub = (feature, marker) => {
@@ -188,13 +211,10 @@ export default class{
 			feature.properties.dzType = 'hub'
 		}
 		marker.getElement().classList.toggle('is_hub', feature.properties.dzType == 'hub')
-		this.generateRoutes()
+		this.reRender({markers: false})
 	}
 
 	generateRoutes = async () => {
-
-		// Empty existing routes
-		this.mapData.routes.features = []
 
 		let start_points
 		const end_points = this.mapData.nodes.features
@@ -243,45 +263,26 @@ export default class{
 	}
 
 	// **********************************************************
-	// Code change updates
+	// Sync functions
+	// These keep the CSV, map display and geoJSON in sync
 
-	startDOMListeners = () => {
-		this.options.dom.codeCSV.addEventListener("input", (e) => {
-			this.codeChange('csv')
-		})
-		this.options.dom.codeGeoJSON.addEventListener("input", (e) => {
-			this.codeChange('geoJSON')
-		})
-	}
+	// Take an updated CSV from the input box, and convert it to geoJSON and render
+	// Expected format: lat,lng,placename,type,dzType
+	csvIsUpdated = (csv) => {
 
-	// ///////////////////////////////////////////////
-	// Triggered whenever the code is changed in the CSV input window
-	codeChange = (type) => {
-		if(type == 'csv'){
-			// Convert CSV to geoJSON
-			const newCSV = this.options.dom.codeCSV.value.replace(/\t/gi,',')
-			this.options.dom.codeCSV.value = newCSV
-			const newGeoJSON = this.parseCSVtoGeoJSON(newCSV.trim())
+		csv = csv.trim()
 
-			console.log(`Adding ${newGeoJSON.features.length} locations`)
-			this.mapData.nodes = newGeoJSON
-			this.options.dom.codeGeoJSON.value = JSON.stringify(this.mapData.nodes, null, 3)
-			this.addMarkers()
-		}
-	}
-
-	// ///////////////////////////////////////////////
-	parseCSVtoGeoJSON = (csv) => {
+		// Placeholder for new geoJSON
 		const newGeoJSON = {
 			type: 'FeatureCollection',
 			features: []
 		}
 
+		// Convert to geoJSON
 		for(let row of csv.split('\n')){
 			const parts = row.split(',')
 			if(parts.length >= 2){
-				// Add new geoJSON
-				const title = (parts.length > 2) ? parts[2] : ''
+				const placename = (parts.length > 2) ? parts[2] : ''
 				const type = (parts.length > 3) ? parts[3] : ''
 				const dzType = (parts.length > 4) ? parts[4] : ''
 				const newLocation = {
@@ -291,7 +292,7 @@ export default class{
 						coordinates: [parts[1], parts[0]]
 					},
 					properties: {
-						title: title,
+						placename: placename,
 						type: type,
 						dzType: dzType
 					}
@@ -299,7 +300,36 @@ export default class{
 				newGeoJSON.features.push(newLocation)
 			}
 		}
-		return newGeoJSON
+
+		// Populate types
+		const unique_types = newGeoJSON.features.map(feature => feature.properties.type).filter(((value, index, array) => array.indexOf(value) === index))
+		this.generateTypes(unique_types)
+
+		// Save to mapData
+		this.mapData.nodes = newGeoJSON
+
+		// Convert to GeoJSON for GeoJSON input box
+		this.options.dom.codeGeoJSON.value = JSON.stringify(this.mapData.nodes, null, 3)
+
+		// Add the nodes as markers
+		this.reRender()
+	}
+
+	generateTypes = (type_list) => {
+		this.featureOptions.types = type_list
+		this.options.dom.typeColours.innerHTML = ''
+		for(let type of type_list){
+			this.options.dom.typeColours.insertAdjacentHTML('beforeend',`<span style="--color: hsl(${type_list.indexOf(type)*29}, 72%, 53%)">${type}</span>`)
+			console.log(`%c${type}`, `background: hsl(${type_list.indexOf(type)*29}, 72%, 53%)`);
+		}
+	}
+
+	mapIsUpdated = () => {
+		// TODO
+	}
+
+	geoJSONIsUpdated = () => {
+		// TODO
 	}
 
 	// **********************************************************
@@ -341,6 +371,6 @@ export default class{
 
 	setRouteType = (type) => {
 		this.featureOptions.mode = type
-		this.generateRoutes()
+		this.reRender({markers: false})
 	}
 }

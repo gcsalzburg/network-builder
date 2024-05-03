@@ -49,7 +49,7 @@
 51.578411,0.0248039,Wanstead Place Medical Centre,Medical Centre
 51.5222415,0.0325405,Newham General Hospital,Hospital
 51.4986925,-0.025695,Blt Birth Centre,Birth
-51.5430798,0.0085702,Deanery Road Midwifery Group,MIdwife
+51.5430798,0.0085702,Deanery Road Midwifery Group,Midwife
 51.5110915,0.017334,Appleby Centre,Misc
 51.5018167,0.0562749,North Woolwich Children's Centre,Children's
 51.511472,0.0256886,Freemasons Road Midwifery Centre,Midwife
@@ -164,7 +164,7 @@
 						<div class="drone-range-wrapper">
 							<label for="drone-range">Drone range:</label>
 							<span class="slider">
-								<input type="range" class="drone-range" id="drone-range" min="1" max="25" step="1" list="drone-range-ticklist" value="5" />
+								<input type="range" class="drone-range" id="drone-range" name="drone-range" min="1" max="25" step="1" list="drone-range-ticklist" value="5" />
 								<datalist id="drone-range-ticklist">
 									<option value="0"></option>
 									<option label="5" value="5"></option>
@@ -178,10 +178,15 @@
 						</div>
 						<div class="route-mode-wrapper">
 							<label for="mode">Mode:</label>
-							<select name="mode">
+							<select name="mode" id="mode">
 								<option value="hub-spoke">Hub & spoke</option>
 								<option value="multi-hop">Multi-hop</option>
 							</select>
+						</div>
+						<div class="type-colour-wrapper">
+							<label for="type-colour">Colour by type:</label>
+							<input type="checkbox" id="type-colour" name="type-colour">
+							<div class="type-colours"></div>
 						</div>
 						
 					</div>

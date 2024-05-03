@@ -23,12 +23,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 			mapbox: document.querySelector('.map'),
 			codeCSV: document.querySelector('[data-code=csv]'),
 			codeGeoJSON: document.querySelector('[data-code=geojson]'),
-			droneRange: document.querySelector('.drone-range-wrapper')
+			typeColours: document.querySelector('.type-colours')
 		}		
 	})
 
 	// **********************************************************
-	// Handle selects,sliders etc
+	// Handle selects,sliders,checkboxes etc
 
 	const droneRangeValue = document.querySelector('.drone-range-wrapper .value')
 
@@ -39,6 +39,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 	document.querySelector('.route-mode-wrapper select').addEventListener("input", (e) => {
 		myNetwork.setRouteType(e.target.value)
+	})
+
+	document.querySelector('.type-colour-wrapper input').addEventListener("input", (e) => {
+		document.body.dataset.showTypeColours = e.target.checked
+	})
+
+	// **********************************************************
+	// Handle code input textboxes
+
+	document.querySelector('[data-code=csv]').addEventListener("input", (e) => {
+		const newCSV = e.target.value.replace(/\t/gi,',')
+		e.target.value = newCSV // Substitute tabs for commas when pasting in, to help!
+		myNetwork.csvIsUpdated(newCSV)
+	})
+	document.querySelector('[data-code=geojson]').addEventListener("input", (e) => {
+		// TODO
 	})
 
 	// **********************************************************
