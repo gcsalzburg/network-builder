@@ -162,6 +162,7 @@ export default class{
 			// create a HTML element for each feature
 			const el = document.createElement('div')
 			el.className = 'marker'
+			el.classList.toggle('is_hub', feature.properties.dzType == 'hub')
 			const newMarker = new mapboxgl.Marker(el).setLngLat(feature.geometry.coordinates).addTo(this.map)
 			this.mapData.markers.push(newMarker)
 
@@ -172,8 +173,21 @@ export default class{
 			newMarker.getElement().addEventListener('mouseleave', (e) => {
 				this.options.follower.clear()
 			})
+			newMarker.getElement().addEventListener('click', (e) => {
+				this.toggleMarkerHub(feature, newMarker)
+			})
 		}
 
+		this.generateRoutes()
+	}
+
+	toggleMarkerHub = (feature, marker) => {
+		if(feature.properties.dzType == 'hub'){
+			feature.properties.dzType = ''
+		}else{
+			feature.properties.dzType = 'hub'
+		}
+		marker.getElement().classList.toggle('is_hub', feature.properties.dzType == 'hub')
 		this.generateRoutes()
 	}
 
